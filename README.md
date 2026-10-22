@@ -13,7 +13,7 @@
 ```sh
 mkdir live-summary-docker
 cd live-summary-docker
-docker run --rm -i -v "$PWD:/out" python:3.12-slim-bookworm python - <<'PY'
+docker run --rm -i --user "$(id -u):$(id -g)" -v "$PWD:/out" python:3.12-slim-bookworm python - <<'PY'
 import io, pathlib, urllib.request, zipfile
 REF = 'main'
 url = 'https://github.com/eririmoe/live-summary-docker/archive/' + REF + '.zip'
@@ -34,7 +34,7 @@ PY
 ## 2. 初始化私有配置
 
 ```sh
-docker run --rm -it -v "$PWD:/workspace" -w /workspace \
+docker run --rm -it --user "$(id -u):$(id -g)" -v "$PWD:/workspace" -w /workspace \
   python:3.12-slim-bookworm python scripts/setup.py
 sh compose.sh build
 ```
@@ -46,7 +46,7 @@ sh compose.sh build
 给自动化 agent 的无交互配置格式见 [deployment-input.example.json](deployment-input.example.json)。将已安全填充的内容保存为 `deploy.private.json` 后使用：
 
 ```sh
-docker run --rm -v "$PWD:/workspace" -w /workspace \
+docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/workspace" -w /workspace \
   python:3.12-slim-bookworm python scripts/setup.py --input /workspace/deploy.private.json
 ```
 

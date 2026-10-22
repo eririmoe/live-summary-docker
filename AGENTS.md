@@ -13,7 +13,7 @@ Read README.md, docs/CONFIGURATION.md and docs/OPERATIONS.md before operating th
 ## Execution sequence
 
 1. Inspect Docker availability, CPU/memory, free disk and existing port/container conflicts. Do not install host Python or overwrite a live deployment.
-2. Obtain reviewed source into a dedicated directory. Run scripts/setup.py inside the documented Python container. Noninteractive input follows deployment-input.example.json and is named *.private.json. Defaults MUST remain paused with deletion disabled. If configuration exists, inspect and preserve it rather than rerunning initialization destructively.
+2. Obtain reviewed source into a dedicated directory. Run scripts/setup.py inside the documented Python container with --user matching the host UID:GID so the host user can read the private .env file. Noninteractive input follows deployment-input.example.json and is named *.private.json. Defaults MUST remain paused with deletion disabled. If configuration exists, inspect and preserve it rather than rerunning initialization destructively.
 3. Build Dockerfile. Do not copy .env, data, records or secrets into an image; the explicit .dockerignore allowlist is part of the boundary.
 4. Run the README offline tests with network disabled and no deployment data mounted. All tests must pass. Compose config validation must use --quiet because expanded config includes the recorder password.
 5. Start worker/admin. Start the recorder profile only for a new recorder, never to replace an existing container. Use register-room and wire-recorder only on the authorized recorder; both preserve unrelated settings. Validate exact filename/record_dir agreement.

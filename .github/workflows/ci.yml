@@ -28,7 +28,7 @@ jobs:
         run: docker compose --profile recorder config --quiet
       - name: Initialize from empty state and start the actual services
         run: |
-          docker run --rm -v "$PWD:/workspace" -w /workspace --entrypoint python live-summary:test -c "import json; from scripts.setup import initialize; initialize({'config':{'room_id':123456789,'streamer':'Synthetic CI','record_dir':'ci-recordings'},'recorder_secrets':{'RECORDER_USER':'synthetic','RECORDER_PASS':'synthetic-ci-password'}})"
+          docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/workspace" -w /workspace --entrypoint python live-summary:test -c "import json; from scripts.setup import initialize; initialize({'config':{'room_id':123456789,'streamer':'Synthetic CI','record_dir':'ci-recordings'},'recorder_secrets':{'RECORDER_USER':'synthetic','RECORDER_PASS':'synthetic-ci-password'}})"
           docker compose --profile recorder up -d --no-build --wait recorder worker admin
           docker compose run --rm -T tools python scripts/manage.py register-room
           docker compose run --rm -T tools python scripts/manage.py wire-recorder

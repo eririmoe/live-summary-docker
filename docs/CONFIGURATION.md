@@ -26,7 +26,7 @@
 初始化只写配置，不连接 API，不开启录制或付费请求。绝对 `DATA_DIR`、`RECORDS_DIR` 必须在 bootstrap 容器内挂载到与主机相同路径，例如：
 
 ```sh
-docker run --rm -it -v "$PWD:/workspace" -v /srv/live-summary:/srv/live-summary \
+docker run --rm -it --user "$(id -u):$(id -g)" -v "$PWD:/workspace" -v /srv/live-summary:/srv/live-summary \
   -v /srv/records:/srv/records -w /workspace \
   python:3.12-slim-bookworm python scripts/setup.py
 ```
