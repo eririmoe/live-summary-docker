@@ -50,7 +50,7 @@ docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/workspace" -w /workspace \
   python:3.12-slim-bookworm python scripts/setup.py --input /workspace/deploy.private.json
 ```
 
-实际密钥文件由部署者提供；agent 不应把密钥拼接进命令、提交或报告。绝对数据路径需要在初始化容器里按**相同绝对路径**额外挂载；最简单且可直接运行的默认布局是项目下的 `data/` 和 `records/`。详细执行契约见 [AGENTS.md](AGENTS.md)。
+实际密钥文件由部署者提供；agent 不应把密钥拼接进命令、提交或报告。向导将当前 UID/GID 写入私有 `.env`，应用与新录播容器使用相同用户读写专用目录，避免 0700/0600 文件的跨用户权限问题。绝对数据路径需要在初始化容器里按**相同绝对路径**额外挂载；最简单且可直接运行的默认布局是项目下的 `data/` 和 `records/`。详细执行契约见 [AGENTS.md](AGENTS.md)。
 
 ## 3. 从零启动录播和服务
 

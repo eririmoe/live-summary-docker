@@ -1,5 +1,6 @@
 name: ${COMPOSE_PROJECT_NAME:-live-summary}
 x-application: &application
+  user: "${APP_UID:-0}:${APP_GID:-0}"
   image: ${APP_IMAGE:-live-summary:local}
   build: .
   restart: unless-stopped
@@ -39,6 +40,7 @@ services:
     profiles: [recorder]
     image: ${RECORDER_IMAGE:-ghcr.io/bililiverecorder/bililiverecorder:2.20.0}
     restart: unless-stopped
+    user: "${APP_UID:-0}:${APP_GID:-0}"
     ports: [127.0.0.1:2356:2356]
     environment:
       BREC_HTTP_BASIC_USER: ${BREC_HTTP_BASIC_USER:?Run the setup wizard first}

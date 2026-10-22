@@ -107,6 +107,7 @@ def initialize(value):
         raise ValueError('use at least 12 characters for recorder/admin password')
     room.setdefault('WEBHOOK_TOKEN',secrets.token_urlsafe(32))
     env={'COMPOSE_PROJECT_NAME':'live-summary','DATA_DIR':deploy['data_dir'],'RECORDS_DIR':deploy['records_dir'],
+         'APP_UID':str(os.getuid()),'APP_GID':str(os.getgid()),
          'APP_IMAGE':'live-summary:local','RECORDER_IMAGE':'ghcr.io/bililiverecorder/bililiverecorder:2.20.0',
          'BREC_HTTP_BASIC_USER':room['RECORDER_USER'],'BREC_HTTP_BASIC_PASS':room['RECORDER_PASS'],
          'ADMIN_ORIGIN':deploy['admin_origin'].rstrip('/'),'ADMIN_COOKIE_SECURE':str(deploy['admin_origin'].startswith('https://')).lower()}
