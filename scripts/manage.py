@@ -94,15 +94,21 @@ def register_room(record=False):
     found=next((r for r in rooms if int(r['roomId'])==cfg['room_id']),None)
     if found and not record:
         print(json.dumps({'room_exists':True,'changed':False,'note':'Existing filename settings preserved; verify record_dir matches.'}));return
+    if not found and record:
+        raise providers.ProviderError('register_room_before_enabling_recording')
+    if not found and rooms:
+        raise providers.ProviderError('new_room_filename_configuration_requires_dedicated_recorder')
     room=call('POST','/api/room',{'roomId':cfg['room_id'],'autoRecord':record})
     if int(room['roomId'])!=cfg['room_id']:
         raise providers.ProviderError('use_canonical_room_id_not_short_id')
     if not found:
         # Directory is user-configured, filename timestamps retain recorder defaults.
         template=cfg['record_dir']+'/录制-{{ roomId }}-{{ "now" | time_zone: "Asia/Shanghai" | format_date: "yyyyMMdd-HHmmss-fff" }}-{{ title | unescape }}.flv'
-        call('POST','/api/room/'+str(cfg['room_id'])+'/config',
+        previous=call('GET','/api/config/global')
+        core.atomic_json(core.STATE/'backups'/('recorder-filename-'+str(time.time_ns())+'.json'),previous)
+        call('POST','/api/config/global',
              {'optionalFileNameRecordTemplate':{'hasValue':True,'value':template}})
-        verified=call('GET','/api/room/'+str(cfg['room_id'])+'/config')
+        verified=call('GET','/api/config/global')
         field=verified.get('optionalFileNameRecordTemplate',{})
         if not isinstance(field,dict) or field.get('value')!=template:
             raise providers.ProviderError('recorder_filename_readback_failed')

@@ -1,4 +1,4 @@
-FROM python:3.12-slim-bookworm@sha256:e73ab8107cd24d9ccdad5c848794ab10d16b4e8462d88868ca840322841062dd
+FROM python:3.12-slim-bookworm@sha256:6a0e06f5ba0b373d051aabd3fffb9b873f27f9a2a3a14bcbe37dee6f0e3bbc70
 ARG TARGETARCH
 ARG DEBIAN_MIRROR=https://deb.debian.org
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 HOME=/state/runtime XDG_CACHE_HOME=/state/runtime/cache BAIDUPCS_GO_CONFIG_DIR=/state/baidu

@@ -7,7 +7,7 @@ x-application: &application
   cap_drop: [ALL]
   security_opt: [no-new-privileges:true]
   pids_limit: 128
-  tmpfs: [/tmp:rw,noexec,nosuid,size=128m]
+  tmpfs: ["/tmp:rw,noexec,nosuid,size=128m"]
   networks: [backend]
   logging:
     driver: json-file
