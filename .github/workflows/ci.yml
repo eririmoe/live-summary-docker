@@ -38,4 +38,6 @@ jobs:
         run: LIVE_SUMMARY_COMPOSE_HELPER=1 sh compose.sh config --quiet
       - name: Remove test services
         if: always()
-        run: docker compose --profile recorder down --remove-orphans
+        run: |
+          docker compose logs --no-color --tail 60 worker admin
+          docker compose --profile recorder down --remove-orphans
