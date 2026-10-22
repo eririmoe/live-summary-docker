@@ -1,0 +1,26 @@
+name: Build and verify
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan public source
+        run: python3 scripts/scan_public.py --tracked
+      - name: Build complete runtime
+        run: docker build -t live-summary:test .
+      - name: Run isolated Python and FFmpeg tests
+        run: |
+          docker run --rm --read-only --network none --tmpfs /tmp:rw,size=256m \
+            -e LIVE_SUMMARY_STATE=/tmp/test-state -e LIVE_SUMMARY_RECORDS=/tmp/test-records \
+            live-summary:test python -m unittest discover -s tests -v
+      - name: Test static search
+        run: node tests/test_archive_search.cjs
+      - name: Validate Compose without printing credentials
+        env:
+          BREC_HTTP_BASIC_USER: synthetic
+          BREC_HTTP_BASIC_PASS: synthetic-test-password
+        run: docker compose --profile recorder config --quiet

@@ -1,0 +1,23 @@
+# Explicit build allowlist keeps credentials, recordings and Git history out.
+**
+!*.py
+!requirements.lock
+!config.example.json
+!summary.schema.json
+!asr-vocabulary.json
+!Dockerfile
+!tools/
+!tools/*.py
+!site/
+!site/*.html
+!site/*.js
+!site/*.css
+!site/*.svg
+!site/_headers
+!admin-site/
+!admin-site/*
+!scripts/
+!scripts/*.py
+!tests/
+!tests/*.py
+!tests/*.cjs

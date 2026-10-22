@@ -1,0 +1,4 @@
+requests>=2.32.4,<3
+jsonschema>=4.23,<5
+defusedxml>=0.7.1,<0.8
+blake3>=1,<2

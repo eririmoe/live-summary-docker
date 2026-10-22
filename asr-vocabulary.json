@@ -1,0 +1,31 @@
+{
+  "version": "example-v1",
+  "context_prefix": "这是一场示例主播的直播。仅用于说明词表格式，请替换成自己核验过的术语。",
+  "terms": [
+    {
+      "word": "示例主播",
+      "weight": 1,
+      "confirmed_by_user": true
+    },
+    {
+      "word": "示例术语",
+      "weight": 1,
+      "confirmed_by_user": true
+    },
+    {
+      "word": "示例爸爸",
+      "weight": 1,
+      "confirmed_by_user": true
+    },
+    {
+      "word": "示例妈妈",
+      "weight": 1,
+      "confirmed_by_user": true
+    },
+    {
+      "word": "语音识别",
+      "weight": 1,
+      "confirmed_by_user": true
+    }
+  ]
+}

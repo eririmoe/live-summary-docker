@@ -1,0 +1,13 @@
+{
+  "config": {
+    "room_id": 123456789,
+    "streamer": "示例主播",
+    "record_dir": "123456789-recordings",
+    "recorder_url": "http://bilirecorder:2356",
+    "baidu_root": "/live-recordings",
+    "publish_backend": "local"
+  },
+  "deployment": {"data_dir":"./data","records_dir":"./records","admin_origin":"http://localhost:8766"},
+  "secrets": {"QIANWEN_API_KEY":"", "DEEPSEEK_API_KEY":""},
+  "recorder_secrets": {"RECORDER_USER":"admin","RECORDER_PASS":""}
+}

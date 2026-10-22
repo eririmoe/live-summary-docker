@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f1f8e6"><meta name="description" content="示例主播 的直播内容留档。按日期浏览概要、话题与时间线，慢慢找回错过的片段。">
+  <title>直播留声簿 · 示例主播 直播档案</title>
+  <meta name="color-scheme" content="light"><link rel="icon" type="image/svg+xml" href="/favicon.svg?v=melon1">
+  <link rel="stylesheet" href="/style.css?v=browse21"><script data-cfasync="false" src="/archive-utils.js?v=browse21" defer></script><script data-cfasync="false" src="/app.js?v=browse21" defer></script>
+</head>
+<body>
+  <header class="header wrap">
+    <a href="/" class="brand" aria-label="直播留声簿 首页"><img class="mark brand-avatar" src="/favicon.svg" width="44" height="44" alt="直播档案图标"><span>直播留声簿<small>LIVE SUMMARY · LIVE ARCHIVE</small></span></a>
+    <nav aria-label="主导航"><a href="#archive">直播档案</a><button id="about">关于</button><a class="live-link" href="#archive" target="_blank" rel="noopener noreferrer">去直播间 <svg class="ui-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path d="M7 17 17 7M7 7h10v10"/></svg></a></nav>
+  </header>
+  <main>
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div class="hero-copy"><h1 id="hero-title">示例主播的<br><em>直播记忆</em></h1><a class="hero-link" href="#archive">翻开直播档案 <span aria-hidden="true">↓</span></a></div>
+      <div class="hero-art" aria-hidden="true"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="record-deck"><div class="record"><div class="record-ring r1"></div><div class="record-ring r2"></div><div class="record-ring r3"></div><div class="record-label picture-label"><img class="record-mascot" src="/favicon.svg" width="100" height="100" alt=""><i></i></div></div></div><svg class="art-star" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="40" height="40" focusable="false"><path d="M24 4v40M4 24h40M10 10l28 28M38 10 10 38"/></svg></div>
+    </section>
+    <section id="archive" class="archive wrap" aria-labelledby="archive-title">
+      <div class="section-top"><div><p class="eyebrow">THE COLLECTION</p><h2 id="archive-title">直播档案<span id="entry-count">—</span></h2></div><p id="collection-note">正在读取档案…</p></div>
+      <div class="toolbar"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="搜索标题、话题或日期" aria-label="搜索直播档案" aria-describedby="search-help"></label><label class="sort"><span class="sr-only">排序</span><select id="sort"><option value="new">最新在前</option><option value="old">最早在前</option></select></label></div>
+      <p id="search-help" class="search-help">日期可输入 10月13日、10/13、2026-10-13，也可与关键词一起搜索。</p>
+      <div id="tags" class="filters" aria-label="按直播类型筛选"></div>
+      <p id="result-status" class="sr-only" aria-live="polite"></p>
+      <div id="entries" class="entries"><div class="empty"><span>◌</span><h3>正在翻开留声簿</h3><p>稍等片刻，直播档案马上就来。</p></div></div>
+      <div id="browse-more" class="browse-more" hidden><p id="browse-count" role="status"></p><button id="load-more" type="button">继续浏览</button></div>
+    </section>
+  </main>
+  <footer class="footer wrap"><div><p>示例主播 · 非官方直播内容档案</p></div><p>音轨与弹幕辅助整理<br><span id="updated">内容可能存在识别误差，请以原录播为准。</span></p></footer>
+  <dialog id="detail"><div class="dialog-top"><span>LIVE NOTES</span><button id="close-detail" class="close" aria-label="关闭总结">×</button></div><article id="detail-body"></article></dialog>
+  <dialog id="about-dialog"><div class="dialog-top"><span>ABOUT THIS ARCHIVE</span><button id="close-about" class="close" aria-label="关闭关于">×</button></div><article><p class="eyebrow">关于留声簿</p><h2>给错过的时光，<br>留一个入口。</h2><p>这里整理示例主播 的直播概要、话题与时间线，便于回顾和检索。</p><p>内容由录播音轨转写与同期弹幕辅助生成，可能存在听写、时间对齐或概括误差。弹幕反映观众反应，不代表主播立场；具体内容请以原录播为准。</p><p>本项目默认使用通用矢量图标，不包含主播头像或第三方角色素材。</p><p>本站为非官方档案，与主播及直播平台无隶属关系。</p></article></dialog>
+</body></html>

@@ -1,0 +1,71 @@
+name: ${COMPOSE_PROJECT_NAME:-live-summary}
+x-application: &application
+  image: ${APP_IMAGE:-live-summary:local}
+  build: .
+  restart: unless-stopped
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  pids_limit: 128
+  tmpfs: [/tmp:rw,noexec,nosuid,size=128m]
+  networks: [backend]
+  logging:
+    driver: json-file
+    options: {max-size: 10m, max-file: "3"}
+services:
+  worker:
+    <<: *application
+    cpus: 0.75
+    mem_limit: 768m
+    ports: [127.0.0.1:8765:8080]
+    volumes:
+      - ${DATA_DIR:-./data}:/state
+      - ${RECORDS_DIR:-./records}:/records:ro
+  admin:
+    <<: *application
+    command: [python, admin.py]
+    cpus: 0.25
+    mem_limit: 192m
+    ports: [127.0.0.1:8766:8081]
+    environment:
+      ADMIN_ORIGIN: ${ADMIN_ORIGIN:-http://localhost:8766}
+      ADMIN_COOKIE_SECURE: ${ADMIN_COOKIE_SECURE:-false}
+      ADMIN_AUTH_FILE: /state/recorder-secrets.json
+    volumes:
+      - ${DATA_DIR:-./data}:/state:ro
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8081/health',timeout=3)"]
+  recorder:
+    profiles: [recorder]
+    image: ${RECORDER_IMAGE:-ghcr.io/bililiverecorder/bililiverecorder:2.20.0}
+    restart: unless-stopped
+    ports: [127.0.0.1:2356:2356]
+    environment:
+      BREC_HTTP_BASIC_USER: ${BREC_HTTP_BASIC_USER:?Run the setup wizard first}
+      BREC_HTTP_BASIC_PASS: ${BREC_HTTP_BASIC_PASS:?Run the setup wizard first}
+      UMASK: "077"
+    volumes:
+      - ${RECORDS_DIR:-./records}:/rec
+    networks:
+      backend:
+        aliases: [bilirecorder]
+  tools:
+    <<: *application
+    profiles: [tools]
+    restart: "no"
+    command: [python, scripts/manage.py, doctor]
+    volumes:
+      - ${DATA_DIR:-./data}:/state
+      - ${RECORDS_DIR:-./records}:/records:ro
+    healthcheck: {disable: true}
+  maintenance:
+    <<: *application
+    profiles: [maintenance]
+    restart: "no"
+    command: [python, tools/24-clean-completed-media.py]
+    volumes:
+      - ${DATA_DIR:-./data}:/state
+      - ${RECORDS_DIR:-./records}:/records
+    healthcheck: {disable: true}
+networks:
+  backend: {}

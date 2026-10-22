@@ -1,0 +1,13 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'
+/data/*
+  Cache-Control: public, max-age=0, must-revalidate
+/style.css
+  Cache-Control: public, max-age=0, must-revalidate
+/app.js
+  Cache-Control: public, max-age=0, must-revalidate
+/archive-utils.js
+  Cache-Control: public, max-age=0, must-revalidate
