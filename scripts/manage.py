@@ -92,16 +92,23 @@ def register_room(record=False):
         except Exception:raise providers.ProviderError('recorder_room_configuration_failed') from None
     rooms=call('GET','/api/room')
     found=next((r for r in rooms if int(r['roomId'])==cfg['room_id']),None)
-    if found and not record:
+    intent={'room_id':cfg['room_id'],'record_dir':cfg['record_dir']}
+    pending=core.STATE/'recorder-room.pending.json'
+    resuming=core.read_json(pending)==intent
+    if found and not record and not resuming:
         print(json.dumps({'room_exists':True,'changed':False,'note':'Existing filename settings preserved; verify record_dir matches.'}));return
     if not found and record:
         raise providers.ProviderError('register_room_before_enabling_recording')
     if not found and rooms:
         raise providers.ProviderError('new_room_filename_configuration_requires_dedicated_recorder')
+    if resuming and any(int(r['roomId'])!=cfg['room_id'] for r in rooms):
+        raise providers.ProviderError('recorder_bootstrap_scope_changed')
+    configure=not found or resuming
+    if configure:core.atomic_json(pending,intent)
     room=call('POST','/api/room',{'roomId':cfg['room_id'],'autoRecord':record})
     if int(room['roomId'])!=cfg['room_id']:
         raise providers.ProviderError('use_canonical_room_id_not_short_id')
-    if not found:
+    if configure:
         # Directory is user-configured, filename timestamps retain recorder defaults.
         template=cfg['record_dir']+'/录制-{{ roomId }}-{{ "now" | time_zone: "Asia/Shanghai" | format_date: "yyyyMMdd-HHmmss-fff" }}-{{ title | unescape }}.flv'
         previous=call('GET','/api/config/global')
@@ -112,6 +119,8 @@ def register_room(record=False):
         field=verified.get('optionalFileNameRecordTemplate',{})
         if not isinstance(field,dict) or field.get('value')!=template:
             raise providers.ProviderError('recorder_filename_readback_failed')
+        core.atomic_json(core.STATE/'recorder-room-bootstrap.json',intent)
+        pending.unlink()
     print(json.dumps({'room_configured':True,'auto_record':record,'recording_directory':cfg['record_dir']}))
 
 def main():

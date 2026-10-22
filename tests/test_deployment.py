@@ -19,8 +19,36 @@ import storage
 
 spec=importlib.util.spec_from_file_location('setup_project',core.APP/'scripts/setup.py')
 setup=importlib.util.module_from_spec(spec);spec.loader.exec_module(setup)
+spec=importlib.util.spec_from_file_location('manage_project',core.APP/'scripts/manage.py')
+manage=importlib.util.module_from_spec(spec);spec.loader.exec_module(manage)
 
 class DeploymentTests(unittest.TestCase):
+    def test_interrupted_room_bootstrap_resumes_only_its_own_intent(self):
+        with tempfile.TemporaryDirectory() as folder,patch.object(core,'STATE',Path(folder)),patch('core.secrets',return_value={'RECORDER_USER':'synthetic','RECORDER_PASS':'synthetic-password'}):
+            rooms=[];global_config={};failed=[False]
+            def api(method,url,**kwargs):
+                route=url.split(':2356')[-1]
+                payload=kwargs.get('json')
+                if route=='/api/room' and method=='GET':value=list(rooms)
+                elif route=='/api/room' and method=='POST':
+                    if not rooms:rooms.append({'roomId':payload['roomId']})
+                    value=rooms[0]
+                elif route=='/api/config/global' and method=='GET':value=dict(global_config)
+                elif route=='/api/config/global' and method=='POST':
+                    if not failed[0]:failed[0]=True;raise requests.ConnectionError()
+                    global_config.update(payload);value={}
+                else:raise AssertionError(route)
+                from types import SimpleNamespace
+                return SimpleNamespace(raise_for_status=lambda:None,json=lambda:value)
+            with patch('requests.request',side_effect=api):
+                with self.assertRaises(providers.ProviderError):manage.register_room()
+                self.assertTrue((core.STATE/'recorder-room.pending.json').exists())
+                manage.register_room()
+                self.assertFalse((core.STATE/'recorder-room.pending.json').exists())
+                self.assertIn(core.settings()['record_dir'],global_config['optionalFileNameRecordTemplate']['value'])
+                manage.register_room()
+            self.assertEqual(len(rooms),1)
+
     def input(self):
         return {'config':{'room_id':987654,'streamer':'Synthetic <Host>','record_dir':'987654-recordings'},
                 'recorder_secrets':{'RECORDER_USER':'test-admin','RECORDER_PASS':'synthetic-password-only'}}

@@ -6,6 +6,8 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      APP_IMAGE: live-summary:test
     steps:
       - uses: actions/checkout@v4
       - name: Scan public source
@@ -27,8 +29,11 @@ jobs:
       - name: Initialize from empty state and start the actual services
         run: |
           docker run --rm -v "$PWD:/workspace" -w /workspace --entrypoint python live-summary:test -c "import json; from scripts.setup import initialize; initialize({'config':{'room_id':123456789,'streamer':'Synthetic CI','record_dir':'ci-recordings'},'recorder_secrets':{'RECORDER_USER':'synthetic','RECORDER_PASS':'synthetic-ci-password'}})"
-          APP_IMAGE=live-summary:test docker compose up -d --no-build --wait worker admin
+          docker compose --profile recorder up -d --no-build --wait recorder worker admin
+          docker compose run --rm -T tools python scripts/manage.py register-room
+          docker compose run --rm -T tools python scripts/manage.py wire-recorder
+          docker compose run --rm -T tools python scripts/manage.py wire-recorder
           docker compose exec -T worker python -c "import requests; assert requests.get('http://127.0.0.1:8080/data/index.json').status_code==200; assert requests.get('http://admin:8081/api/status').status_code==401"
       - name: Remove test services
         if: always()
-        run: docker compose down --remove-orphans
+        run: docker compose --profile recorder down --remove-orphans
