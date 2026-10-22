@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 cd "$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-if docker compose version >/dev/null 2>&1; then
+if [ "${LIVE_SUMMARY_COMPOSE_HELPER:-0}" != 1 ] && docker compose version >/dev/null 2>&1; then
   exec docker compose "$@"
 fi
 # Only this ephemeral CLI helper has the Docker socket, never the applications.

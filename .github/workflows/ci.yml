@@ -34,6 +34,8 @@ jobs:
           docker compose run --rm -T tools python scripts/manage.py wire-recorder
           docker compose run --rm -T tools python scripts/manage.py wire-recorder
           docker compose exec -T worker python -c "import requests; assert requests.get('http://127.0.0.1:8080/data/index.json').status_code==200; assert requests.get('http://admin:8081/api/status').status_code==401"
+      - name: Verify Docker-only Compose helper
+        run: LIVE_SUMMARY_COMPOSE_HELPER=1 sh compose.sh config --quiet
       - name: Remove test services
         if: always()
         run: docker compose --profile recorder down --remove-orphans
